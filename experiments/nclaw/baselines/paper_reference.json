@@ -1,0 +1,40 @@
+{
+  "source": "Submitted 2027_ICRA_FORM.pdf, Table II; SHA256 21047979a03ce48f34cfb09d91db38ef22a72eee6f069f73f738a8d31ae04cb0",
+  "status": "Published manuscript values, not measurements produced by this integration.",
+  "NCLaw": {
+    "jelly": {
+      "mean_loss": 0.00052,
+      "solve_time_s": 1513.2
+    },
+    "sand": {
+      "mean_loss": 0.00016,
+      "solve_time_s": 1305.6
+    },
+    "plasticine": {
+      "mean_loss": 0.00012,
+      "solve_time_s": 1300.2
+    },
+    "water": {
+      "mean_loss": 0.00057,
+      "solve_time_s": 1306.8
+    }
+  },
+  "Diff. Sys-ID": {
+    "jelly": {
+      "mean_loss": 1.2e-08,
+      "solve_time_s": 715.8
+    },
+    "sand": {
+      "mean_loss": 6.3e-13,
+      "solve_time_s": 1132.8
+    },
+    "plasticine": {
+      "mean_loss": 1.6e-10,
+      "solve_time_s": 1028.4
+    },
+    "water": {
+      "mean_loss": 4e-09,
+      "solve_time_s": 556.2
+    }
+  }
+}

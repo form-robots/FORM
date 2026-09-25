@@ -1,0 +1,391 @@
+--- a/experiments/scripts/eval/dataset.py
++++ b/experiments/scripts/eval/dataset.py
+@@ -1,5 +1,6 @@
+ from pathlib import Path
+ import subprocess
++import sys
+ import os
+ from argparse import ArgumentParser
+ 
+@@ -10,7 +11,7 @@
+ 
+ def main():
+     root = get_root(__file__)
+-    python_path = 'python' if PYTHON_PATH is None else PYTHON_PATH
++    python_path = sys.executable if PYTHON_PATH is None else PYTHON_PATH
+ 
+     # ============ start ============
+ 
+@@ -56,7 +57,7 @@
+                 if not extra_args.skip:
+                     base_cmds = [python_path, root / 'eval.py']
+                     cmds = base_cmds + dict_to_hydra(args)
+-                    subprocess.run([str(cmd) for cmd in cmds], shell=False)
++                    subprocess.run([str(cmd) for cmd in cmds], shell=False, check=True)
+ 
+                 # ============ render ============
+ 
+@@ -64,15 +65,17 @@
+ 
+                     base_cmds = [python_path, root / 'render' / 'cube' / f'{render}.py']
+                     cmds = base_cmds + dict_to_hydra(args)
+-                    subprocess.run([str(cmd) for cmd in cmds], shell=False, env=my_env)
++                    subprocess.run([str(cmd) for cmd in cmds], shell=False, check=True, env=my_env)
+ 
+         for elasticity, plasticity in [
+                 ['invariant_full_meta', 'invariant_full_meta'],
++                ['sysid', 'sysid'],
+                 ]:
+ 
+             epoch_args_list = []
+ 
+-            name = Path(env) / mode / f'{elasticity}-{plasticity}'
++            special = elasticity == 'sysid'
++            name = Path(env) / mode / ('sysid' if special else f'{elasticity}-{plasticity}')
+ 
+             for epoch in EPOCHS:
+ 
+@@ -80,11 +83,14 @@
+                 ckpt_name = name / 'ckpt' / f'{epoch:04d}.pt'
+ 
+                 args = subargs | {
+-                    'env/blob/material/elasticity': elasticity,
+-                    'env/blob/material/plasticity': plasticity,
+                     'env.blob.material.ckpt': ckpt_name,
+                     'name': exp_name,
+                 }
++                if not special:
++                    args |= {
++                        'env/blob/material/elasticity': elasticity,
++                        'env/blob/material/plasticity': plasticity,
++                    }
+ 
+                 epoch_args_list.append(args)
+ 
+@@ -95,7 +101,7 @@
+                 if not extra_args.skip:
+                     base_cmds = [python_path, root / 'eval.py']
+                     cmds = base_cmds + dict_to_hydra(args)
+-                    subprocess.run([str(cmd) for cmd in cmds], shell=False)
++                    subprocess.run([str(cmd) for cmd in cmds], shell=False, check=True)
+ 
+                 # ============ render ============
+ 
+@@ -103,7 +109,7 @@
+ 
+                     base_cmds = [python_path, root / 'render' / 'cube' / f'{render}.py']
+                     cmds = base_cmds + dict_to_hydra(args)
+-                    subprocess.run([str(cmd) for cmd in cmds], shell=False, env=my_env)
++                    subprocess.run([str(cmd) for cmd in cmds], shell=False, check=True, env=my_env)
+ 
+                 clean_state(root / 'log' / args['name'] / 'state')
+ 
+--- a/experiments/scripts/eval/time.py
++++ b/experiments/scripts/eval/time.py
+@@ -1,5 +1,6 @@
+ from pathlib import Path
+ import subprocess
++import sys
+ import os
+ from argparse import ArgumentParser
+ 
+@@ -10,7 +11,7 @@
+ 
+ def main():
+     root = get_root(__file__)
+-    python_path = 'python' if PYTHON_PATH is None else PYTHON_PATH
++    python_path = sys.executable if PYTHON_PATH is None else PYTHON_PATH
+ 
+     # ============ start ============
+ 
+@@ -57,7 +58,7 @@
+                 if not extra_args.skip:
+                     base_cmds = [python_path, root / 'eval.py']
+                     cmds = base_cmds + dict_to_hydra(args)
+-                    subprocess.run([str(cmd) for cmd in cmds], shell=False)
++                    subprocess.run([str(cmd) for cmd in cmds], shell=False, check=True)
+ 
+                 # ============ render ============
+ 
+@@ -65,11 +66,11 @@
+ 
+                     base_cmds = [python_path, root / 'render' / 'cube' / f'{render}.py']
+                     cmds = base_cmds + dict_to_hydra(args)
+-                    subprocess.run([str(cmd) for cmd in cmds], shell=False, env=my_env)
++                    subprocess.run([str(cmd) for cmd in cmds], shell=False, check=True, env=my_env)
+ 
+         for elasticity, plasticity in [
+                 ['invariant_full_meta', 'invariant_full_meta'],
+-                # ['sysid', 'sysid'],
++                ['sysid', 'sysid'],
+                 # ['sysid-blind', 'sysid-blind'],
+                 # ['SVD_meta', 'identity'],
+                 # ['supervised', 'supervised'],
+@@ -132,7 +133,7 @@
+                 if not extra_args.skip:
+                     base_cmds = [python_path, root / 'eval.py']
+                     cmds = base_cmds + dict_to_hydra(args)
+-                    subprocess.run([str(cmd) for cmd in cmds], shell=False)
++                    subprocess.run([str(cmd) for cmd in cmds], shell=False, check=True)
+ 
+                 # ============ render ============
+ 
+@@ -140,7 +141,7 @@
+ 
+                     base_cmds = [python_path, root / 'render' / 'cube' / f'{render}.py']
+                     cmds = base_cmds + dict_to_hydra(args)
+-                    subprocess.run([str(cmd) for cmd in cmds], shell=False, env=my_env)
++                    subprocess.run([str(cmd) for cmd in cmds], shell=False, check=True, env=my_env)
+ 
+                 clean_state(root / 'log' / args['name'] / 'state')
+ 
+--- a/experiments/scripts/eval/vel.py
++++ b/experiments/scripts/eval/vel.py
+@@ -1,5 +1,6 @@
+ from pathlib import Path
+ import subprocess
++import sys
+ import os
+ from argparse import ArgumentParser
+ 
+@@ -10,7 +11,7 @@
+ 
+ def main():
+     root = get_root(__file__)
+-    python_path = 'python' if PYTHON_PATH is None else PYTHON_PATH
++    python_path = sys.executable if PYTHON_PATH is None else PYTHON_PATH
+ 
+     # ============ start ============
+ 
+@@ -60,7 +61,7 @@
+                     if not extra_args.skip:
+                         base_cmds = [python_path, root / 'eval.py']
+                         cmds = base_cmds + dict_to_hydra(args)
+-                        subprocess.run([str(cmd) for cmd in cmds], shell=False)
++                        subprocess.run([str(cmd) for cmd in cmds], shell=False, check=True)
+ 
+                     # ============ render ============
+ 
+@@ -68,11 +69,11 @@
+ 
+                         base_cmds = [python_path, root / 'render' / 'cube' / f'{render}.py']
+                         cmds = base_cmds + dict_to_hydra(args)
+-                        subprocess.run([str(cmd) for cmd in cmds], shell=False, env=my_env)
++                        subprocess.run([str(cmd) for cmd in cmds], shell=False, check=True, env=my_env)
+ 
+             for elasticity, plasticity in [
+                     ['invariant_full_meta', 'invariant_full_meta'],
+-                    # ['sysid', 'sysid'],
++                    ['sysid', 'sysid'],
+                     # ['sysid-blind', 'sysid-blind'],
+                     # ['SVD_meta', 'identity'],
+                     # ['supervised', 'supervised'],
+@@ -135,7 +136,7 @@
+                     if not extra_args.skip:
+                         base_cmds = [python_path, root / 'eval.py']
+                         cmds = base_cmds + dict_to_hydra(args)
+-                        subprocess.run([str(cmd) for cmd in cmds], shell=False)
++                        subprocess.run([str(cmd) for cmd in cmds], shell=False, check=True)
+ 
+                     # ============ render ============
+ 
+@@ -143,7 +144,7 @@
+ 
+                         base_cmds = [python_path, root / 'render' / 'cube' / f'{render}.py']
+                         cmds = base_cmds + dict_to_hydra(args)
+-                        subprocess.run([str(cmd) for cmd in cmds], shell=False, env=my_env)
++                        subprocess.run([str(cmd) for cmd in cmds], shell=False, check=True, env=my_env)
+ 
+                     clean_state(root / 'log' / args['name'] / 'state')
+ 
+--- a/experiments/scripts/eval/shape.py
++++ b/experiments/scripts/eval/shape.py
+@@ -1,5 +1,6 @@
+ from pathlib import Path
+ import subprocess
++import sys
+ import os
+ from argparse import ArgumentParser
+ 
+@@ -10,7 +11,7 @@
+ 
+ def main():
+     root = get_root(__file__)
+-    python_path = 'python' if PYTHON_PATH is None else PYTHON_PATH
++    python_path = sys.executable if PYTHON_PATH is None else PYTHON_PATH
+ 
+     # ============ start ============
+ 
+@@ -61,7 +62,7 @@
+                     if not extra_args.skip:
+                         base_cmds = [python_path, root / 'eval.py']
+                         cmds = base_cmds + dict_to_hydra(args)
+-                        subprocess.run([str(cmd) for cmd in cmds], shell=False)
++                        subprocess.run([str(cmd) for cmd in cmds], shell=False, check=True)
+ 
+                     # ============ render ============
+ 
+@@ -69,29 +70,34 @@
+ 
+                         base_cmds = [python_path, root / 'render' / 'cube' / f'{render}.py']
+                         cmds = base_cmds + dict_to_hydra(args)
+-                        subprocess.run([str(cmd) for cmd in cmds], shell=False, env=my_env)
++                        subprocess.run([str(cmd) for cmd in cmds], shell=False, check=True, env=my_env)
+ 
+             for elasticity, plasticity in [
+                     ['invariant_full_meta', 'invariant_full_meta'],
++                    ['sysid', 'sysid'],
+                     ]:
+ 
+                 epoch_args_list = []
+ 
+-                name = Path(env) / mode / f'{elasticity}-{plasticity}'
++                special = elasticity == 'sysid'
++                name = Path(env) / mode / ('sysid' if special else f'{elasticity}-{plasticity}')
+ 
+                 for epoch in EPOCHS:
+ 
+                     exp_name = name / gt_mode / shape_env / f'{epoch:04d}'
+                     ckpt_name = name / 'ckpt' / f'{epoch:04d}.pt'
+ 
+-                args = subargs | {
+-                    'env/blob/material/elasticity': elasticity,
+-                    'env/blob/material/plasticity': plasticity,
+-                    'env.blob.material.ckpt': ckpt_name,
+-                    'name': exp_name,
+-                }
++                    args = subargs | {
++                        'env.blob.material.ckpt': ckpt_name,
++                        'name': exp_name,
++                    }
++                    if not special:
++                        args |= {
++                            'env/blob/material/elasticity': elasticity,
++                            'env/blob/material/plasticity': plasticity,
++                        }
+ 
+-                epoch_args_list.append(args)
++                    epoch_args_list.append(args)
+ 
+                 for args in epoch_args_list:
+ 
+@@ -100,7 +106,7 @@
+                     if not extra_args.skip:
+                         base_cmds = [python_path, root / 'eval.py']
+                         cmds = base_cmds + dict_to_hydra(args)
+-                        subprocess.run([str(cmd) for cmd in cmds], shell=False)
++                        subprocess.run([str(cmd) for cmd in cmds], shell=False, check=True)
+ 
+                     # ============ render ============
+ 
+@@ -108,7 +114,7 @@
+ 
+                         base_cmds = [python_path, root / 'render' / 'cube' / f'{render}.py']
+                         cmds = base_cmds + dict_to_hydra(args)
+-                        subprocess.run([str(cmd) for cmd in cmds], shell=False, env=my_env)
++                        subprocess.run([str(cmd) for cmd in cmds], shell=False, check=True, env=my_env)
+ 
+                     clean_state(root / 'log' / args['name'] / 'state')
+ 
+--- a/experiments/scripts/train/invariant_full_meta-invariant_full_meta.py
++++ b/experiments/scripts/train/invariant_full_meta-invariant_full_meta.py
+@@ -1,5 +1,6 @@
+ from pathlib import Path
+ import subprocess
++import sys
+ 
+ from nclaw.constants import SHAPE_ENVS, ENVS, SEEDS, EPOCHS, RENDER, PYTHON_PATH
+ from nclaw.utils import get_root, get_script_parser, dict_to_hydra
+@@ -7,7 +8,7 @@
+ 
+ def main():
+     root = get_root(__file__)
+-    python_path = 'python' if PYTHON_PATH is None else PYTHON_PATH
++    python_path = sys.executable if PYTHON_PATH is None else PYTHON_PATH
+ 
+     # ============ start ============
+ 
+@@ -38,7 +39,7 @@
+ 
+         cmds = base_cmds + dict_to_hydra(args)
+ 
+-        subprocess.run([str(cmd) for cmd in cmds], shell=False)
++        subprocess.run([str(cmd) for cmd in cmds], shell=False, check=True)
+ 
+     # ============= end =============
+ 
+--- a/experiments/scripts/dataset/main.py
++++ b/experiments/scripts/dataset/main.py
+@@ -1,5 +1,6 @@
+ from pathlib import Path
+ import subprocess
++import sys
+ import os
+ from argparse import ArgumentParser
+ 
+@@ -9,7 +10,7 @@
+ 
+ def main():
+     root = get_root(__file__)
+-    python_path = 'python' if PYTHON_PATH is None else PYTHON_PATH
++    python_path = sys.executable if PYTHON_PATH is None else PYTHON_PATH
+ 
+     # ============ start ============
+ 
+@@ -43,13 +44,13 @@
+         if not extra_args.skip:
+             base_cmds = [python_path, root / 'eval.py']
+             cmds = base_cmds + dict_to_hydra(args)
+-            subprocess.run([str(cmd) for cmd in cmds], shell=False)
++            subprocess.run([str(cmd) for cmd in cmds], shell=False, check=True)
+ 
+         for render in extra_args.render:
+ 
+             base_cmds = [python_path, root / 'render' / 'cube' / f'{render}.py']
+             cmds = base_cmds + dict_to_hydra(args)
+-            subprocess.run([str(cmd) for cmd in cmds], shell=False, env=my_env)
++            subprocess.run([str(cmd) for cmd in cmds], shell=False, check=True, env=my_env)
+ 
+ 
+ if __name__ == '__main__':
+--- a/experiments/train.py
++++ b/experiments/train.py
+@@ -1,6 +1,7 @@
+ from pathlib import Path
+ import random
+ import time
++import json
+ from collections import defaultdict
+ from tqdm.autonotebook import tqdm, trange
+ 
+@@ -103,6 +104,10 @@
+ 
+     criterion = nn.MSELoss()
+     criterion.to(torch_device)
++
++    wp.synchronize()
++    torch.cuda.synchronize(torch_device)
++    training_started = time.perf_counter()
+ 
+     for epoch in trange(cfg.train.num_epochs, position=1):
+ 
+@@ -193,6 +198,19 @@
+         teacher.step()
+ 
+     writer.close()
++    wp.synchronize()
++    torch.cuda.synchronize(torch_device)
++    training_loop_s = time.perf_counter() - training_started
++    timing = {
++        'training_loop_s': training_loop_s,
++        'scope': 'epoch loop, including checkpoint writes and logging; excludes setup and evaluation',
++        'epochs': int(cfg.train.num_epochs),
++        'seed': int(cfg.seed),
++        'gpu': torch.cuda.get_device_name(torch_device),
++        'torch': torch.__version__,
++        'resumed': bool(cfg.resume),
++    }
++    (exp_root / 'baseline_timing.json').write_text(json.dumps(timing, indent=2) + '\n')
+ 
+ 
+ if __name__ == '__main__':

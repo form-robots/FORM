@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+out/
+data/artifacts/
+data/raw/
+data/bundles/
+press_real_data
+pouring_real_data
+shaping_real_data
+presentation/assets
+presentation/outputs/

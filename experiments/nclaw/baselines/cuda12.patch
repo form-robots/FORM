@@ -1,0 +1,33 @@
+diff --git a/third_party/warp/warp/context.py b/third_party/warp/warp/context.py
+index a491bd1..c745865 100644
+--- a/third_party/warp/warp/context.py
++++ b/third_party/warp/warp/context.py
+@@ -506,7 +506,6 @@ class ModuleBuilder:
+ 
+         for kernel in self.module.kernels.values():
+             cu_source += warp.codegen.codegen_kernel(kernel, device="cuda", options=self.options)
+-            cu_source += warp.codegen.codegen_module(kernel, device="cuda")
+ 
+         # add headers
+         cu_source = warp.codegen.cuda_module_header + cu_source
+diff --git a/third_party/warp/warp/native/cuda_util.cpp b/third_party/warp/warp/native/cuda_util.cpp
+index 0fcc3c8..4d030e5 100644
+--- a/third_party/warp/warp/native/cuda_util.cpp
++++ b/third_party/warp/warp/native/cuda_util.cpp
+@@ -93,14 +93,14 @@ bool init_cuda_driver()
+         fprintf(stderr, "Warp CUDA error: Could not open nvcuda.dll.\n");
+         return false;
+     }
+-    pfn_cuGetProcAddress = (PFN_cuGetProcAddress)GetProcAddress(hCudaDriver, "cuGetProcAddress");
++    pfn_cuGetProcAddress = (PFN_cuGetProcAddress_v11030)GetProcAddress(hCudaDriver, "cuGetProcAddress");
+ #elif defined(__linux__)
+     static void* hCudaDriver = dlopen("libcuda.so", RTLD_NOW);
+     if (hCudaDriver == NULL) {
+         fprintf(stderr, "Warp CUDA error: Could not open libcuda.so.\n");
+         return false;
+     }
+-    pfn_cuGetProcAddress = (PFN_cuGetProcAddress)dlsym(hCudaDriver, "cuGetProcAddress");
++    pfn_cuGetProcAddress = (PFN_cuGetProcAddress_v11030)dlsym(hCudaDriver, "cuGetProcAddress");
+ #endif
+ 
+     if (!pfn_cuGetProcAddress)

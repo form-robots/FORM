@@ -1,0 +1,32 @@
+[
+  {
+    "file": "form-benchmark.tar.gz",
+    "sha256": "ab90e7080cceccc8013dbfe69bd833bbb351b6f5867bbb60f83661bab77f77eb",
+    "bytes": 414245
+  },
+  {
+    "file": "form-elastic.tar.gz",
+    "sha256": "9cf6ec2a0f4f97d7d3a53f3a574f2603c5a2ab08e5407a8ef30e37a99325db49",
+    "bytes": 4699638235
+  },
+  {
+    "file": "form-pouring.tar.gz",
+    "sha256": "234438bd1d4d3938fe78d58c63a8675d066b33863f3052868dbe6876b0679f01",
+    "bytes": 1293669417
+  },
+  {
+    "file": "form-presentation.tar.gz",
+    "sha256": "1abba61d4cc115f42adf31467da6315c47b45d14cc2cbeff0336b8031c245048",
+    "bytes": 258581743
+  },
+  {
+    "file": "form-shaping_real.tar.gz",
+    "sha256": "298d65a520dc7b6b8e12d401a80b22f3820c98bb4d740e25da099e863675a275",
+    "bytes": 5198175323
+  },
+  {
+    "file": "form-shaping_sim.tar.gz",
+    "sha256": "d1c92d6799fafd9fd63f1ee6498a04d46c98175924aa35e2331f144e0c748ac3",
+    "bytes": 1149376743
+  }
+]

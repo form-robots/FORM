@@ -1,0 +1,55 @@
+{
+  "status": "passed",
+  "checks": {
+    "elastic_A_E_pa": 80608.89355693937,
+    "plastic_A_E_pa": 80795.38157861725,
+    "plastic_A_yield_pa": 1015.3315095517531,
+    "elastic_B_E_pa": 248112.32605994397,
+    "plastic_B_E_pa": 81396.39622372326,
+    "plastic_B_yield_pa": 10184.178453432796,
+    "play_doh": {
+      "E_pa": 46544.594909785745,
+      "yield_pa": 7920.111726775491
+    },
+    "butter_slime": {
+      "E_pa": 51027.983179381205,
+      "yield_pa": 7629.696253634786
+    },
+    "plasticine": {
+      "E_pa": 155324.95415175217,
+      "yield_pa": 21477.479880527895
+    },
+    "viscosity_Pa_s": 3.4392377844275503,
+    "red_shape_IoU": 0.7565534771499216,
+    "yellow_shape_IoU": 0.7235865570367305,
+    "gray_shape_IoU": 0.7782817837969541,
+    "pouring_maximum_mean_error_ml": 3.8429517439419953
+  },
+  "scope": "Coefficient solves and saved-shape/measurement metrics. No new GPU rollout or baseline training.",
+  "numerical_relative_tolerance": 1e-12,
+  "date_utc": "2026-09-25T00:15:17.876854+00:00",
+  "cpu_tests": {
+    "passed": 153,
+    "skipped": 4,
+    "failed": 0,
+    "original_run_total_passed": 165,
+    "original_run_total_skipped": 4,
+    "note": "The run also covered a subsequently omitted legacy campaign-driver test module."
+  },
+  "additional_checks": {
+    "pouring_video_observations": "All saved numeric arrays match exactly",
+    "hardware_interior_motion": "ep0003: all saved numeric arrays match exactly",
+    "hardware_scan_reconstruction": "All three IoUs match exactly after completion and photographic filtering",
+    "pouring_photometry": "All 30 receiver measurements and six mean/SD summaries reproduced",
+    "pouring_forward_preflight": "Frozen geometry, robot model and motion-clock characterization load successfully",
+    "presentation": "893 asset checksums verified; opening preview rendered",
+    "internal_imports": "No missing internal imports in the selected source",
+    "external_checkout_dependencies": "No runtime references to the original MPM-engine checkout",
+    "production_gpu_replays": "Not rerun during release preparation; original baseline training continues separately"
+  },
+  "limitations": [
+    "Dataset archives prepared locally; hosting not yet chosen.",
+    "Original baseline checkpoint/revision and complete table provenance remain incomplete.",
+    "See docs/reproduction.md for preserved hardware and numerical qualifications."
+  ]
+}

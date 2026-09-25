@@ -1,0 +1,2 @@
+*.patch -whitespace
+src/warpmpm/kernels/*.py -whitespace
